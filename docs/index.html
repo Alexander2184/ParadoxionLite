@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paradoxion</title>
+  <link rel="stylesheet" href="./styles_paradoxion.css">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="screen main-menu" id="main-menu">
+    <h1>Paradoxion</h1>
+    <button id="btn-play">Play</button>
+</div>
+
+<div class="screen level-select hidden" id="level-select">
+    <h2>Select Level</h2>
+    <div id="levels-container"></div>
+    <button id="btn-back-from-select">Back</button>
+</div>
+
+<div class="screen level hidden" id="level">
+    <button id="btn-back-to-menu" class="back-btn">Main Menu</button>
+    <div class="board" id="board"></div>
+    <div class="inventory" id="inventory"></div>
+</div>
+
+<script src="./script_paradoxion.js" type="module"></script>
+</body>
+</html>

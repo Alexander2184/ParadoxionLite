@@ -1,0 +1,338 @@
+:root {
+    --ml: 0;
+    --mb: 0;
+}
+
+body {
+    font-family: 'Orbitron', sans-serif;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.screen {
+    width: 100%;
+    height: 100vh;
+}
+
+.back-btn {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 100;
+}
+
+.level {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background: linear-gradient(
+            120deg,
+            #d0d4e0 0%,   /* светло-серый с фиолетовым подтоном */
+            #c0c6d8 40%,  /* чуть насыщеннее для глубины */
+            #aab4d4 70%,  /* мягкий сине-фиолетовый акцент */
+            #9aa0c8 100%  /* холодный светлый финиш */
+        );
+}
+
+.level::after {
+    content: "";
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    background-image: repeating-linear-gradient(
+        45deg,
+        rgba(255,255,255,0.02) 0,
+        rgba(255,255,255,0.02) 1px,
+        transparent 1px,
+        transparent 10px
+    );
+}
+
+.level-editor {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 100px;
+    height: 100vh;
+    margin: 0;
+    background-color: #dddddd;
+}
+
+.level-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    background-color: #dddddd;
+}
+
+#level-editor {
+
+}
+
+#editor-panel {
+
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    width: 800px;
+}
+
+.editor-controls {
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    width: 100%;
+}
+
+.editor-palette {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.editor-button {
+    width: 100px;
+    height: 100px;
+    font-size: 40px;
+}
+
+.palette-item {
+    width: 100px;
+    height: 100px;
+}
+
+.board {
+    display: grid;
+    grid-template-rows: repeat(var(--grid-rows), 1fr);
+    grid-template-columns: repeat(var(--grid-columns), 1fr);
+
+    gap: 4px;
+    padding: 4px;
+
+    background: linear-gradient(
+        145deg,
+        #2c2f3a,
+        #353a46
+    );
+
+    border-radius: 12px;
+
+    box-shadow:
+        0 20px 40px rgba(0,0,0,0.45),
+        inset 0 3px 8px rgba(255,255,255,0.05);
+}
+
+.inventory {
+    margin-left: 200px;
+    display: grid;
+    grid-template-rows: repeat(var(--items-rows), 1fr);
+    gap: 20px;
+    width: 220px;
+
+    padding: 25px;
+    border: 2px solid #333;
+    border-radius: 15px;
+    background: linear-gradient(
+        145deg,
+        #7a7eb0 0%,   /* светлый серо-фиолетовый */
+        #6d73aa 50%,  /* насыщенный холодный синий */
+        #646a9e 100%  /* глубокий фиолетово-синий акцент */
+    );
+    border: 2px solid #505580;  /* контрастная рамка */
+    border-radius: 10px;
+    box-shadow:
+        0 3px 6px rgba(0,0,0,0.3),   /* общая тень */
+        inset 0 2px 4px rgba(255,255,255,0.15),  /* верхняя подсветка для выпуклости */
+        inset 0 -2px 4px rgba(0,0,0,0.2);       /* нижняя тень для объема */
+}
+
+.inv-item {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.inv-amount {
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    font-size: 60px;
+}
+
+.row {
+    display: grid;
+    grid-template-columns: repeat(var(--grid-columns), 1fr);
+    gap: 4px;
+}
+
+.cell {
+    --cell-size: 100px;
+    width: var(--cell-size);
+    height: var(--cell-size);
+    display: flex;
+    border: 1px solid black;
+    justify-content: center;
+    align-items: center;
+    transition-property: background-color;
+    transition-duration: 0.15s;
+    transition-timing-function: ease-in;
+    background: linear-gradient(
+        145deg,
+        #4a4f5f 0%,
+        #3c4150 40%,
+        #353a46 60%,
+        #4b4f7a 100%
+    );
+    border-radius: 8px;
+
+    box-shadow:
+        inset 0 2px 4px rgba(255,255,255,0.15),
+        inset 0 -4px 8px rgba(0,0,0,0.5);
+
+    transition: all 0.2s ease;
+}
+
+.cell:hover {
+    box-shadow:
+        inset 0 2px 6px rgba(255,255,255,0.25),
+        inset 0 -4px 10px rgba(0,0,0,0.6),
+        0 0 12px rgba(120,130,255,0.25);
+}
+
+.cell.chosen {
+    background: linear-gradient(
+        145deg,
+        #5f6fa0 0%,       /* холодный фиолетово-серый верх */
+        #638cb5 40%,      /* яркий акцент */
+        #4b4f7a 100%      /* фирменный холодный конец */
+    );
+
+    box-shadow:
+        inset 0 2px 6px rgba(255,255,255,0.25),  /* металлический блик */
+        inset 0 -4px 8px rgba(0,0,0,0.5),        /* глубина */
+        0 0 12px rgba(99,140,181,0.5);           /* мягкое свечение для выбранной клетки */
+
+    transition: all 0.2s ease;
+}
+
+
+.cell.danger {
+    background-color: #ca2d2d;
+}
+
+.item {
+    --item-size: 84px;
+    width: var(--item-size);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    border: 2px solid #000;
+    box-shadow: 2px 2px 2px #000;
+    cursor: pointer;
+    position: absolute;
+    margin-left: var(--ml, 0);
+    margin-bottom: var(--mb, 0);
+}
+
+
+.item.orb-red {
+    --item-size: 90px;
+    background-image: url('img/item-red.png');
+    background-size: cover;
+    border: none;
+    box-shadow: none;
+}
+
+.item.orb-green {
+    --item-size: 90px;
+    background-image: url('img/item-green.png');
+    background-size: cover;
+    border: none;
+    box-shadow: none;
+}
+
+.item.orb-blue {
+    --item-size: 90px;
+    background-image: url('img/item-blue.png');
+    background-size: cover;
+    border: none;
+    box-shadow: none;
+}
+
+.item.paradox {
+    background: #45150d;
+}
+
+
+.piece.moving {
+    transition-property: margin;
+    transition-duration: 0.3s;
+    transition-timing-function: ease-in-out;
+}
+
+.piece.vanishing {
+    animation: vanishing 0.3s forwards;
+}
+
+.winning {
+    background: white;
+    border: 2px solid black;
+    border-radius: 10px;
+    width: 35%;
+    height: 35%;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 30px;
+    transition-property: opacity;
+    transition-duration: 3s;
+    transition-timing-function: ease-in-out;
+}
+
+.popup {
+    background: white;
+    border: 2px solid black;
+    border-radius: 10px;
+    width: 20%;
+    height: 12%;
+    position: absolute;
+    margin-top: 42%;
+    margin-left: 70%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    transition-property: opacity;
+    transition-duration: 3s;
+    transition-timing-function: ease-in-out;
+}
+
+.content {
+    margin: 10px;
+    text-align: center;
+}
+
+
+.moving {
+    transition-property: margin;
+    transition-duration: 0.3s;
+    transition-timing-function: ease-in-out;
+}
+
+.vanishing {
+    animation: vanishing 0.3s forwards;
+}
+
+@keyframes vanishing {
+    from {opacity: 1}
+    to {opacity: 0}
+}
+

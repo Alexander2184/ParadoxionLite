@@ -1,0 +1,139 @@
+[
+  {
+    "id": 1,
+    "width": 11,
+    "height": 11,
+    "board_items": [
+      { "row": 5, "col": 4, "type": "orb-red" },
+      { "row": 5, "col": 6, "type": "orb-red" }
+    ],
+    "inventory": [
+      { "type": "orb-red", "amount": 1 },
+      { "type": "orb-green", "amount": 1 }
+    ]
+  },
+  {
+    "id": 2,
+    "width": 7,
+    "height": 7,
+    "board_items": [
+      { "row": 3, "col": 3, "type": "orb-blue" },
+      { "row": 3, "col": 4, "type": "orb-blue" }
+    ],
+    "inventory": [
+      { "type": "orb-blue", "amount": 2 }
+    ]
+  },
+  {
+    "id": 3,
+    "width": 8,
+    "height": 8,
+    "board_items": [
+      { "row": 3, "col": 3, "type": "orb-red" },
+      { "row": 3, "col": 4, "type": "orb-red" },
+
+      { "row": 3, "col": 5, "type": "orb-blue" },
+      { "row": 4, "col": 6, "type": "orb-blue" }
+    ],
+    "inventory": [
+      { "type": "orb-red", "amount": 1 },
+      { "type": "orb-blue", "amount": 1 }
+    ]
+  },
+  {
+    "id": 4,
+    "width": 9,
+    "height": 9,
+    "board_items": [
+      {
+        "row": 0,
+        "col": 1,
+        "type": "orb-green" },
+      {
+        "row": 0,
+        "col": 8,
+        "type": "orb-green"
+      },
+      {
+        "row": 1,
+        "col": 0,
+        "type": "orb-green"
+      },
+      {
+        "row": 1,
+        "col": 3,
+        "type": "orb-red"
+      },
+      {
+        "row": 1,
+        "col": 6,
+        "type": "orb-red"
+      },
+      {
+        "row": 1,
+        "col": 7,
+        "type": "orb-green"
+      },
+      {
+        "row": 2,
+        "col": 5,
+        "type": "orb-red"
+      },
+      {
+        "row": 2,
+        "col": 8,
+        "type": "orb-green"
+      },
+      {
+        "row": 3,
+        "col": 1,
+        "type": "orb-red"
+      },
+      {
+        "row": 4,
+        "col": 5,
+        "type": "orb-blue"
+      },
+      {
+        "row": 5,
+        "col": 2,
+        "type": "orb-red"
+      },
+      {
+        "row": 5,
+        "col": 4,
+        "type": "orb-blue"
+      },
+      {
+        "row": 6,
+        "col": 1,
+        "type": "orb-red"
+      },
+      {
+        "row": 7,
+        "col": 1,
+        "type": "orb-green"
+      },
+      {
+        "row": 8,
+        "col": 0,
+        "type": "orb-green"
+      },
+      {
+        "row": 8,
+        "col": 2,
+        "type": "orb-green"
+      }
+    ],
+    "inventory": [
+      {
+        "type": "orb-blue",
+        "amount": 3
+      },
+      {
+        "type": "orb-green",
+        "amount": 3
+      }
+    ]
+  }
+]

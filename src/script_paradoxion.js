@@ -2,11 +2,17 @@ const body = document.querySelector("body");
 const board = document.getElementById("board");
 const inventory = document.getElementById("inventory");
 const level = document.getElementById("level");
-
+const rules = document.getElementById("rules-container");
 const mainMenu = document.getElementById("main-menu");
 const levelSelect = document.getElementById("level-select");
+const levelsContainer = document.getElementById("levels-container");
 
 const cell_size = 100;
+
+function clearBoard() {
+    board.innerHTML = "";
+    inventory.innerHTML = "";
+}
 
 let levels = [];
 
@@ -14,38 +20,54 @@ fetch("levels.json")
     .then(response => response.json())
     .then(data => {
         levels = data;
-        generateLevelButtons(); // кнопки теперь генерируем после загрузки
+        generateLevelButtons();
     })
-    .catch(err => console.error("Не удалось загрузить уровни:", err));
-
-
+    .catch(err => console.error("Failed to load levels:", err));
 
 document.getElementById("btn-play").addEventListener("click", () => {
-    showScreen(levelSelect);
+    switchScreen(levelSelect);
 });
 
 document.getElementById("btn-back-from-select").addEventListener("click", () => {
-    showScreen(mainMenu);
+    switchScreen(mainMenu);
 });
 
-function clearBoard() {
-    board.innerHTML = "";
-    inventory.innerHTML = "";
-}
+document.getElementById("btn-rules").addEventListener("click", () => {
+    switchScreen(rules);
+});
+
+
+document.getElementById("btn-undo").addEventListener("click", () => {
+    undo();
+});
+
+document.getElementById("btn-back-to-select").addEventListener("click", () => {
+    clearBoard();
+    switchScreen(levelSelect);
+});
 
 document.getElementById("btn-back-to-menu").addEventListener("click", () => {
     clearBoard();
-    showScreen(mainMenu);
+    switchScreen(mainMenu);
 });
 
-const levelsContainer = document.getElementById("levels-container");
+document.getElementById("btn-rules-to-select").addEventListener("click", () => {
+    clearBoard();
+    switchScreen(levelSelect);
+});
+
+document.getElementById("btn-rules-to-menu").addEventListener("click", () => {
+    clearBoard();
+    switchScreen(mainMenu);
+});
 
 function generateLevelButtons() {
     levelsContainer.innerHTML = "";
 
     levels.forEach((lvl, index) => {
+
         const btn = document.createElement("button");
-        btn.textContent = "Level " + lvl.id;
+        btn.textContent = "Level " + (index + 1);
 
         btn.addEventListener("click", () => {
             startLevel(index);
@@ -57,19 +79,15 @@ function generateLevelButtons() {
 
 generateLevelButtons();
 
-function showScreen(screen) {
+function switchScreen(screen) {
     mainMenu.classList.add("hidden");
     levelSelect.classList.add("hidden");
     level.classList.add("hidden");
+    rules.classList.add("hidden");
 
     screen.classList.remove("hidden");
 }
 
-function initLevelProperties() {
-    level.dataset.state = "running";
-    level.dataset.chosen = "false";
-    level.dataset.chosenIdx = "-1";
-}
 
 function createEmptyBoard(width, height) {
     for (let i = 0; i < width; i++) {
@@ -96,15 +114,21 @@ function createEmptyBoard(width, height) {
     board.style.setProperty("--grid-rows", width)
 }
 
-function createBoardFromTemplate(template) {
+function createBoardFromTemplate(template, createStack) {
     createEmptyBoard(template.width, template.height);
     for (let i = 0; i < template.board_items.length; i++) {
         addItem(template.board_items[i], false)
     }
+    if (createStack) {
+        let reqWidth = template.width * 100 + 550;
+        level.style.setProperty("min-width", reqWidth + "px")
+        level.width = template.width;
+        level.undoStack = [];
+        level.undoStack.push(template);
+    }
 }
 
 function createInventoryFromTemplate(template) {
-    console.log(inventory)
     inventory.style.setProperty("--items-rows", template.inventory.length)
     for (let i = 0; i < template.inventory.length; i++) {
         addInventoryItem(template.inventory[i], i)
@@ -179,14 +203,14 @@ function checkWin() {
     }
     if (win) {
         level.dataset.state = "win";
-        createWinMessage("You win!");
+        createWinScreen("You win!");
     } else if (inventory.childNodes.length === 0) {
         level.dataset.state = "lose";
-        createWinMessage("You lose. Try again?");
+        createLoseScreen("You lose. Try again?");
     }
 }
 
-function exportBoard() {
+function exportBoard(writeConsole) {
     const levelData = {
         width: board.width,
         height: board.height,
@@ -220,8 +244,10 @@ function exportBoard() {
         });
     }
 
-    console.log("Exported level:");
-    console.log(JSON.stringify(levelData, null, 4));
+    if (writeConsole) {
+        console.log("Exported level:");
+        console.log(JSON.stringify(levelData, null, 4));
+    }
 
     return levelData;
 }
@@ -238,15 +264,18 @@ function possibleMove(board, i, j) {
     return cell.childNodes.length === 0;
 }
 
-function createMessage(text) {
+function createMessage(text, e) {
     console.log("Error: " + text);
     const popup = document.createElement("div");
     popup.classList.add("popup");
-    body.appendChild(popup);
+    popup.style.left = e.clientX + 10 + 'px';
+    popup.style.top = e.clientY + 10 + 'px';
+    document.getElementById("aside").appendChild(popup);
     const content = document.createElement("div");
     content.classList.add("content");
     content.textContent = text;
     popup.appendChild(content);
+
 
     setTimeout(function() {
         popup.style.setProperty("opacity", "0");
@@ -256,20 +285,58 @@ function createMessage(text) {
     }, 3000)
 }
 
-function createWinMessage(text) {
+function createWinScreen(text) {
     const winningPopup = document.createElement("div");
+    winningPopup.classList.add("ending");
     winningPopup.classList.add("winning");
     const content = document.createElement("div");
     content.classList.add("content");
     content.textContent = text;
     winningPopup.appendChild(content);
-    level.appendChild(winningPopup);
-    setTimeout(function() {
-        winningPopup.style.setProperty("opacity", "0");
-    }, 100)
-    setTimeout(function() {
+
+    const btn = document.createElement("button");
+    btn.textContent = "Level select";
+
+    btn.addEventListener("click", () => {
+        switchScreen(levelSelect);
         winningPopup.remove();
-    }, 3000)
+    });
+
+    winningPopup.append(btn);
+
+    level.appendChild(winningPopup);
+    levelsContainer.childNodes[level.id - 1].classList.add("complete");
+}
+
+function createLoseScreen(text) {
+    const winningPopup = document.createElement("div");
+    winningPopup.classList.add("ending");
+    winningPopup.classList.add("losing");
+    const content = document.createElement("div");
+    content.classList.add("content");
+    content.textContent = text;
+    winningPopup.appendChild(content);
+
+    const btn = document.createElement("button");
+    btn.textContent = "Level select";
+
+    btn.addEventListener("click", () => {
+        switchScreen(levelSelect);
+        winningPopup.remove();
+    });
+
+    const btnUndo = document.createElement("button");
+    btnUndo.textContent = "Undo";
+
+    btnUndo.addEventListener("click", () => {
+        undo();
+        winningPopup.remove();
+    });
+
+    winningPopup.append(btn);
+    winningPopup.append(btnUndo);
+
+    level.appendChild(winningPopup);
 }
 
 function checkTriplet(item) {
@@ -360,6 +427,9 @@ function checkTriplet(item) {
 }
 
 
+/* Potentially extendable to other item types.
+   Paradox shall not be a part of any combination (at least, for now). */
+
 function checkCombination(item) {
     switch(item.type) {
         case "orb-red":
@@ -377,7 +447,7 @@ function checkCombination(item) {
     }
 }
 
-function animatePiece(board, piece, cell, dstCell) {
+function animatePiece(board, piece, cell, dstCell, shouldAdd) {
     const deltaX = (dstCell.dataset.i - cell.dataset.i) * cell_size * 2;
     const deltaY = (dstCell.dataset.j - cell.dataset.j) * cell_size * 2;
 
@@ -405,7 +475,9 @@ function animatePiece(board, piece, cell, dstCell) {
     piece.dataset.col = dstCell.dataset.j;
 
     setTimeout(function() {
-        dstCell.appendChild(piece);
+        if (shouldAdd) {
+            dstCell.appendChild(piece);
+        }
         cell.removeChild(movingPiece)
     }, 350);
 }
@@ -470,11 +542,24 @@ function makePush() {
 
         const [r, c] = key.split(",").map(Number);
 
-        if (sources.length > 1) {
+        let counter = 0;
+        sources.forEach(srcKey => {
+            const [sr, sc] = srcKey.split(",").map(Number);
+            const cell = board.childNodes[sr].childNodes[sc];
+            const type = cell?.childNodes[0]?.dataset?.type;
+            if (type) {
+                ++counter;
+            }
+        });
+
+        if (counter > 1) {
 
             sources.forEach(srcKey => {
                 const [sr, sc] = srcKey.split(",").map(Number);
-                removeItem(sr, sc);
+                const fromCell = board.childNodes[sr].childNodes[sc];
+                const toCell = board.childNodes[r].childNodes[c];
+                const piece = fromCell.childNodes[0];
+                animatePiece(board, piece, fromCell, toCell, false);
             });
 
             addItem({ row: r, col: c, type: "paradox" }, false);
@@ -483,11 +568,6 @@ function makePush() {
 
             const source = sources[0];
             const [rw, cl] = source.split(",").map(Number);
-            if (moveMapFrom.get(source).length > 1) {
-                removeItem(rw, cl);
-                addItem({ row: rw, col: cl, type: "paradox" }, false);
-                return;
-            }
 
             const cell = board.childNodes[rw].childNodes[cl];
             const type = cell?.childNodes[0]?.dataset?.type;
@@ -495,12 +575,18 @@ function makePush() {
             if (!type) return;
 
 
+            if (moveMapFrom.get(source).length > 1) {
+                removeItem(rw, cl);
+                addItem({ row: rw, col: cl, type: "paradox" }, false);
+                return;
+            }
+
             const fromCell = board.childNodes[rw].childNodes[cl];
             const toCell = board.childNodes[r].childNodes[c];
 
-            if (fromCell && fromCell.childNodes.length > 0) {
+            if (fromCell && fromCell.childNodes.length > 0 && toCell.childNodes.length === 0) {
                 const piece = fromCell.childNodes[0];
-                animatePiece(board, piece, fromCell, toCell);
+                animatePiece(board, piece, fromCell, toCell, true);
             }
         }
     });
@@ -509,7 +595,9 @@ function makePush() {
 
 function runBoard() {
 
-    level.dataset.state = "moving";
+    level.dataset.state = "moving"; // lock the board while performing all the pushes
+
+    // Update the board iteratively. During one iteration, all combinations and pushes should be made simultaneously.
     let timerId = setTimeout(function iteration() {
         board.erase = [];
         board.pushes = [];
@@ -519,6 +607,8 @@ function runBoard() {
             checkCombination(board.moved[i]);
         }
 
+
+        // No combinations made - can finish
         if (board.erase.length === 0) {
             board.moved = [];
             level.dataset.state = "running";
@@ -543,24 +633,24 @@ function runBoard() {
                 const col = push.from.col + push.dy;
                 if (checkOverflow(row, col) && board.childNodes[row].childNodes[col].childNodes.length > 0) {
                     const item = board.childNodes[row].childNodes[col].childNodes[0];
-
                     board.moved.push({row, col, type: item.dataset.type});
                 }
 
             }
         }, 370)
-        timerId = setTimeout(iteration, 400);
-    }, 400);
+        timerId = setTimeout(iteration, 400); // Board shall let all the animations finish
+    }, 400);                                  // and only then proceed to next iteration
 
 }
 
-function makeMove(invPosition, i, j) {
+function makeMove(invPosition, i, j, evt) {
     const cell = board.childNodes[i].childNodes[j];
     const invEntry = inventory.childNodes[invPosition];
     if (cell.childNodes.length > 0) {
-        createMessage("Cell is already occupied");
+        createMessage("Cell is already occupied", evt);
         releaseItem();
     } else {
+        level.undoStack.push(exportBoard(false));
         const invItem = invEntry.childNodes[0].childNodes[0];
         console.log(invItem);
         const invType = invItem.dataset.type;
@@ -573,6 +663,18 @@ function makeMove(invPosition, i, j) {
         decrementInv(invPosition);
         addItem(item, true);
     }
+}
+
+function undo() {
+    console.log(level.undoStack);
+    if (level.undoStack.length === 1) {
+        return;
+    }
+    let lastBoard = level.undoStack.pop();
+    clearBoard();
+    createBoardFromTemplate(lastBoard, false);
+    createInventoryFromTemplate(lastBoard);
+    level.dataset.state = "running";
 }
 
 function decrementInv(pos) {
@@ -600,48 +702,17 @@ function releaseItem() {
 
 }
 
-let default_level = {
-    width: 11,
-    height: 11,
-    board_items: [
-        {
-            row: 5,
-            col: 4,
-            type: "orb-red"
-        },
-        {
-            row: 5,
-            col: 6,
-            type: "orb-red"
-        }
-    ],
-    inventory: [
-        {
-            type: "orb-red",
-            amount: 1
-        },
-        {
-            type: "orb-green",
-            amount: 1
-        },
-        {
-            type: "orb-blue",
-            amount: 1
-        },
-        {
-            type: "paradox",
-            amount: 1
-        }
-    ]
-}
-
-
 function startLevel(index) {
-    initLevelProperties();
-    createBoardFromTemplate(levels[index]);
+    clearBoard();
+    createBoardFromTemplate(levels[index], true);
     createInventoryFromTemplate(levels[index]);
 
-    showScreen(level);
+    level.dataset.state = "running";
+    level.dataset.chosen = "false";
+    level.dataset.chosenIdx = "-1";
+    level.id = levels[index].id;
+
+    switchScreen(level);
 }
 
 
@@ -652,19 +723,19 @@ board.addEventListener("click", function(evt) {
                 if (evt.target.classList.contains("cell")) {
                     const i = parseInt(evt.target.dataset["i"]);
                     const j = parseInt(evt.target.dataset["j"]);
-                    makeMove(parseInt(level.dataset.chosenIdx), i, j);
+                    makeMove(parseInt(level.dataset.chosenIdx), i, j, evt);
                 } else {
                     const i = parseInt(evt.target.dataset["row"]);
                     const j = parseInt(evt.target.dataset["col"]);
-                    makeMove(parseInt(level.dataset.chosenIdx), i, j);
+                    makeMove(parseInt(level.dataset.chosenIdx), i, j, evt);
                 }
                 return;
             } else {
-                createMessage("Wrong move position");
+                createMessage("Wrong move position", evt);
                 releaseItem();
             }
         } else {
-            createMessage("Choose an item first");
+            createMessage("Choose an item first", evt);
         }
     }
 })
@@ -685,8 +756,6 @@ inventory.addEventListener("click", function(evt) {
             releaseItem();
         }
     }
-
-
 })
 
 

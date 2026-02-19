@@ -39,6 +39,8 @@ function createBoardFromTemplate(template) {
     for (let i = 0; i < template.board_items.length; i++) {
         addItem(template.board_items[i], false)
     }
+    let reqWidth = template.width * 100 + 550;
+    level.style.setProperty("min-width", reqWidth + "px")
 }
 
 function createInventoryFromTemplate(template) {
@@ -294,125 +296,6 @@ function checkCombination(item) {
     }
 }
 
-function makePush() {
-
-    const moveMap = new Map();
-    const moveMapFrom = new Map();
-
-    for (let push of board.pushes) {
-
-        const targetRow = push.from.row + push.dx;
-        const targetCol = push.from.col + push.dy;
-
-        if (!checkOverflow(targetRow, targetCol)) continue;
-
-        const key = targetRow + "," + targetCol;
-        const keyFrom = push.from.row + "," + push.from.col;
-
-        if (!moveMap.has(key)) {
-            moveMap.set(key, []);
-        }
-
-        if (!moveMapFrom.has(keyFrom)) {
-            moveMapFrom.set(keyFrom, []);
-        }
-
-        if (!moveMap.get(key).includes(keyFrom)) {
-            moveMap.get(key).push(keyFrom);
-        }
-        if (!moveMapFrom.get(keyFrom).includes(key)) {
-            moveMapFrom.get(keyFrom).push(key);
-        }
-    }
-
-    const pushedSources = new Set();
-
-    for (let push of board.pushes) {
-        const key = push.from.row + "," + push.from.col;
-        pushedSources.add(key);
-    }
-
-
-    console.log(moveMapFrom)
-
-    moveMap.forEach((sources, key) => {
-
-        const [r, c] = key.split(",").map(Number);
-
-        if (sources.length > 1) {
-            addItem({ row: r, col: c, type: "paradox" }, false);
-        } else {
-
-            const source = sources[0];
-            const [rw, cl] = source.split(",").map(Number);
-            if (moveMapFrom.get(source).length > 1) {
-                const [r1, c1] = source.split(",").map(Number);
-                addItem({ row: r1, col: c1, type: "paradox" }, false);
-                return;
-            }
-
-            const cell = board.childNodes[rw].childNodes[cl];
-            const type = cell?.childNodes[0]?.dataset?.type;
-
-            if (!type) return;
-
-            addItem({ row: r, col: c, type }, false);
-        }
-    });
-
-    pushedSources.forEach(key => {
-        const [r, c] = key.split(",").map(Number);
-        if (
-            board.childNodes[r] &&
-            board.childNodes[r].childNodes[c] &&
-            board.childNodes[r].childNodes[c].childNodes.length > 0
-        ) {
-            removeItem(r, c);
-        }
-    });
-}
-
-function runBoard() {
-
-    level.dataset.state = "moving";
-    let timerId = setTimeout(function iteration() {
-        board.erase = [];
-        board.pushes = [];
-
-
-        for (let i = 0; i < board.moved.length; ++i) {
-            checkCombination(board.moved[i]);
-        }
-
-        if (board.erase.length === 0) {
-            board.moved = [];
-            level.dataset.state = "running";
-            checkWin();
-            return;
-        }
-
-        for (let cell of board.erase) {
-            removeItem(cell.row, cell.col);
-        }
-
-        makePush();
-
-        board.moved = [];
-        for (let push of board.pushes) {
-            const row = push.from.row + push.dx;
-            const col = push.from.col + push.dy;
-            if (checkOverflow(row, col) && board.childNodes[row].childNodes[col].childNodes.length > 0) {
-                const item = board.childNodes[row].childNodes[col].childNodes[0];
-
-                board.moved.push({row, col, type: item.dataset.type});
-            }
-
-        }
-        console.log("!!!!");7
-        timerId = setTimeout(iteration, 250);
-    }, 250);
-
-}
 
 function makeMove(invPosition, i, j) {
     const cell = board.childNodes[i].childNodes[j];
@@ -618,10 +501,8 @@ inventory.addEventListener("click", function(evt) {
 
     const invEntry = evt.target.closest(".inv-item");
 
-    // Добавление
     if (selectedEditorType && selectedEditorType !== "empty") {
 
-        // ищем существующий тип
         const existing = [...inventory.children].find(entry =>
             entry.querySelector(".item").dataset.type === selectedEditorType
         );
@@ -638,7 +519,6 @@ inventory.addEventListener("click", function(evt) {
         return;
     }
 
-    // Удаление (режим empty)
     if (selectedEditorType === "empty" && invEntry) {
         const amount = parseInt(invEntry.dataset.amount);
 

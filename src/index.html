@@ -9,8 +9,9 @@
 </head>
 <body>
 <div class="screen main-menu" id="main-menu">
-    <h1>Paradoxion</h1>
+    <h1>Paradoxion Lite</h1>
     <button id="btn-play">Play</button>
+    <button id="btn-rules">Rules</button>
 </div>
 
 <div class="screen level-select hidden" id="level-select">
@@ -20,11 +21,33 @@
 </div>
 
 <div class="screen level hidden" id="level">
-    <button id="btn-back-to-menu" class="back-btn">Main Menu</button>
     <div class="board" id="board"></div>
-    <div class="inventory" id="inventory"></div>
+    <div class="aside" id="aside">
+        <div class="inventory" id="inventory"></div>
+        <button id="btn-undo" class="btn-undo">Undo</button>
+        <button id="btn-back-to-select" class="back-btn">Level select</button>
+        <button id="btn-back-to-menu" class="back-btn">Main Menu</button>
+    </div>
 </div>
 
+<div id="rules-container" class="screen hidden">
+    <div id="rules-placeholder"></div>
+
+    <div class="buttons-container">
+        <button id="btn-rules-to-select" class="back-btn">Level select</button>
+        <button id="btn-rules-to-menu" class="back-btn">Main Menu</button>
+    </div>
+</div>
+
+<script>
+    fetch("rules.html")
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById("rules-placeholder").innerHTML = data;
+      })
+      .catch(error => console.error("Ошибка загрузки:", error));
+</script>
 <script src="./script_paradoxion.js" type="module"></script>
+
 </body>
 </html>

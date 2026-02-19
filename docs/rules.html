@@ -1,0 +1,360 @@
+<div class="screen rules" id="rules">
+
+    <div class="rules-text">
+        <h1>Paradoxion Lite</h1>
+        <h2>Rules</h2>
+        <p>
+            Your goal is to clear board from all items. To do so, you can place items in your inventory.
+            Items react when they form combinations, clearing themselves from the board and pushing other items.
+            Items push that way may form other combinations, pushing yet another items and so on.
+        </p>
+        <p>
+            It's OK to have items in the inventory left when the board is empty, but having empty inventory
+            without clearing the board is a loss.
+        </p>
+        <h3>Combinations</h3>
+        <h4><span style="color: red;">Red</span>, <span style="color: green;">Green</span>
+            and <span style="color: blue;">Blue</span> orbs:</h4>
+        <p>
+            Basic combination for orbs - 3 (or more) orbs of the same color in a vertical or horizontal line.
+        </p>
+
+        <div class="board" style="--grid-rows: 1;">
+            <div class="row" style="--grid-columns: 5;">
+                <div class="cell" data-i="1" data-j="0"></div>
+                <div class="cell" data-i="1" data-j="1">
+                    <div class = "item orb-red"></div>
+                </div>
+                <div class="cell" data-i="1" data-j="2">
+                    <div class = "item orb-red flashing"></div>
+                </div>
+                <div class="cell" data-i="1" data-j="3">
+                    <div class = "item orb-red"></div>
+                </div>
+                <div class="cell" data-i="1" data-j="4"></div>
+            </div>
+        </div>
+
+        <p> In some cases, 2 or more lines can be formed simultaneously: </p>
+
+        <div class="board" style="--grid-rows: 3;">
+            <div class="row" style="--grid-columns: 3;">
+                <div class="cell" data-i="0" data-j="0">
+                    <div class = "item orb-green flashing"></div>
+                </div>
+                <div class="cell" data-i="0" data-j="1">
+                    <div class = "item orb-green"></div>
+                </div>
+                <div class="cell" data-i="0" data-j="2">
+                    <div class = "item orb-green"></div>
+                </div>
+            </div>
+
+            <div class="row" style="--grid-columns: 3;">
+                <div class="cell" data-i="1" data-j="0">
+                    <div class = "item orb-green"></div>
+                </div>
+                <div class="cell" data-i="1" data-j="1"></div>
+                <div class="cell" data-i="1" data-j="2"></div>
+            </div>
+
+            <div class="row" style="--grid-columns: 3;">
+                <div class="cell" data-i="2" data-j="0">
+                    <div class = "item orb-green"></div>
+                </div>
+                <div class="cell" data-i="2" data-j="1"></div>
+                <div class="cell" data-i="2" data-j="2"></div>
+            </div>
+        </div>
+
+        <p> If combination was triggered by the orb in the middle, both line neighbors are pushed away: </p>
+
+        <div class="rules-demonstration">
+            <div class="board" style="--grid-rows: 1;">
+                <div class="row" style="--grid-columns: 7;">
+                    <div class="cell" data-i="1" data-j="0"></div>
+                    <div class="cell" data-i="1" data-j="1">
+                        <div class = "item orb-green"></div>
+                    </div>
+                    <div class="cell" data-i="1" data-j="2">
+                        <div class = "item orb-red"></div>
+                    </div>
+                    <div class="cell" data-i="1" data-j="3">
+                        <div class = "item orb-red flashing"></div>
+                    </div>
+                    <div class="cell" data-i="1" data-j="4">
+                        <div class = "item orb-red"></div>
+                    </div>
+                    <div class="cell" data-i="1" data-j="5">
+                        <div class = "item orb-green"></div>
+                    </div>
+                    <div class="cell" data-i="1" data-j="6"></div>
+                </div>
+            </div>
+
+            <div>→</div>
+
+            <div class="board" style="--grid-rows: 1;">
+                <div class="row" style="--grid-columns: 7;">
+                    <div class="cell" data-i="1" data-j="0">
+                        <div class = "item orb-green"></div>
+                    </div>
+                    <div class="cell" data-i="1" data-j="1"></div>
+                    <div class="cell" data-i="1" data-j="2"></div>
+                    <div class="cell" data-i="1" data-j="3"></div>
+                    <div class="cell" data-i="1" data-j="4"></div>
+                    <div class="cell" data-i="1" data-j="5"></div>
+                    <div class="cell" data-i="1" data-j="6">
+                        <div class = "item orb-green"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+        <p> However, if combination if triggered by the first/last orb,
+            only the furthest neighbor from the newly placed orb is pushed: </p>
+
+        <div class="rules-demonstration">
+            <div class="board" style="--grid-rows: 1;">
+                <div class="row" style="--grid-columns: 7;">
+                    <div class="cell" data-i="1" data-j="0"></div>
+                    <div class="cell" data-i="1" data-j="1">
+                        <div class = "item orb-blue"></div>
+                    </div>
+                    <div class="cell" data-i="1" data-j="2">
+                        <div class = "item orb-red flashing"></div>
+                    </div>
+                    <div class="cell" data-i="1" data-j="3">
+                        <div class = "item orb-red"></div>
+                    </div>
+                    <div class="cell" data-i="1" data-j="4">
+                        <div class = "item orb-red"></div>
+                    </div>
+                    <div class="cell" data-i="1" data-j="5">
+                        <div class = "item orb-blue"></div>
+                    </div>
+                    <div class="cell" data-i="1" data-j="6"></div>
+                </div>
+            </div>
+
+            <div>→</div>
+
+            <div class="board" style="--grid-rows: 1;">
+                <div class="row" style="--grid-columns: 7;">
+                    <div class="cell" data-i="1" data-j="0"></div>
+                    <div class="cell" data-i="1" data-j="1">
+                        <div class = "item orb-blue"></div>
+                    </div>
+                    <div class="cell" data-i="1" data-j="2"></div>
+                    <div class="cell" data-i="1" data-j="3"></div>
+                    <div class="cell" data-i="1" data-j="4"></div>
+                    <div class="cell" data-i="1" data-j="5"></div>
+                    <div class="cell" data-i="1" data-j="6">
+                        <div class = "item orb-blue"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <h4> Paradox orb</h4>
+
+        <div class="board" style="--grid-rows: 1;">
+            <div class="row" style="--grid-columns: 1;">
+                <div class="cell" data-i="0" data-j="0">
+                    <div class = "item paradox"></div>
+                </div>
+            </div>
+        </div>
+
+        <p> Paradox cannot form any combinations
+            and cannot be gotten rid of by any means (currently).
+            Accidentally making it is guaranteed loss. </p>
+
+        <p> There are 2 ways of making a paradox:
+            by trying to push an orb in 2 different directions simultaneously:</p>
+
+
+        <div class="rules-demonstration">
+            <div class="board" style="--grid-rows: 4;">
+                <div class="row" style="--grid-columns: 4;">
+                    <div class="cell" data-i="1" data-j="0">
+                        <div class = "item orb-red"></div>
+                    </div>
+                    <div class="cell" data-i="1" data-j="1">
+                        <div class = "item orb-blue"></div>
+                    </div>
+                    <div class="cell" data-i="1" data-j="2">
+                        <div class = "item orb-blue"></div>
+                    </div>
+                    <div class="cell" data-i="1" data-j="3">
+                        <div class = "item orb-blue flashing"></div>
+                    </div>
+                </div>
+                <div class="row" style="--grid-columns: 4;">
+                    <div class="cell" data-i="1" data-j="0">
+                        <div class = "item orb-blue"></div>
+                    </div>
+                    <div class="cell" data-i="1" data-j="1"></div>
+                    <div class="cell" data-i="1" data-j="2"></div>
+                    <div class="cell" data-i="1" data-j="3"></div>
+                </div>
+                <div class="row" style="--grid-columns: 4;">
+                    <div class="cell" data-i="1" data-j="0">
+                        <div class = "item orb-blue"></div>
+                    </div>
+                    <div class="cell" data-i="1" data-j="1"></div>
+                    <div class="cell" data-i="1" data-j="2"></div>
+                    <div class="cell" data-i="1" data-j="3"></div>
+                </div>
+                <div class="row" style="--grid-columns: 4;">
+                    <div class="cell" data-i="1" data-j="0">
+                        <div class = "item orb-blue flashing"></div>
+                    </div>
+                    <div class="cell" data-i="1" data-j="1"></div>
+                    <div class="cell" data-i="1" data-j="2"></div>
+                    <div class="cell" data-i="1" data-j="3"></div>
+                </div>
+            </div>
+
+            <div>→</div>
+
+            <div class="board" style="--grid-rows: 4;">
+                <div class="row" style="--grid-columns: 4;">
+                    <div class="cell" data-i="1" data-j="0">
+                        <div class = "item paradox"></div>
+
+                    </div>
+                    <div class="cell" data-i="1" data-j="1"></div>
+                    <div class="cell" data-i="1" data-j="2"></div>
+                    <div class="cell" data-i="1" data-j="3"></div>
+                </div>
+                <div class="row" style="--grid-columns: 4;">
+                    <div class="cell" data-i="1" data-j="0"></div>
+                    <div class="cell" data-i="1" data-j="1"></div>
+                    <div class="cell" data-i="1" data-j="2"></div>
+                    <div class="cell" data-i="1" data-j="3"></div>
+                </div>
+                <div class="row" style="--grid-columns: 4;">
+                    <div class="cell" data-i="1" data-j="0"></div>
+                    <div class="cell" data-i="1" data-j="1"></div>
+                    <div class="cell" data-i="1" data-j="2"></div>
+                    <div class="cell" data-i="1" data-j="3"></div>
+                </div>
+                <div class="row" style="--grid-columns: 4;">
+                    <div class="cell" data-i="1" data-j="0"></div>
+                    <div class="cell" data-i="1" data-j="1"></div>
+                    <div class="cell" data-i="1" data-j="2"></div>
+                    <div class="cell" data-i="1" data-j="3"></div>
+                </div>
+            </div>
+
+        </div>
+
+        <p> or pushing 2 orbs simultaneously into the same place:</p>
+
+
+        <div class="rules-demonstration">
+            <div class="board" style="--grid-rows: 5;">
+                <div class="row" style="--grid-columns: 5;">
+                    <div class="cell" data-i="1" data-j="0"></div>
+                    <div class="cell" data-i="1" data-j="1">
+                        <div class = "item orb-red"></div>
+                    </div>
+                    <div class="cell" data-i="1" data-j="2">
+                        <div class = "item orb-green"></div>
+                    </div>
+                    <div class="cell" data-i="1" data-j="3">
+                        <div class = "item orb-green"></div>
+                    </div>
+                    <div class="cell" data-i="1" data-j="4">
+                        <div class = "item orb-green flashing"></div>
+                    </div>
+                </div>
+                <div class="row" style="--grid-columns: 5;">
+                    <div class="cell" data-i="1" data-j="0">
+                        <div class = "item orb-red"></div>
+                    </div>
+                    <div class="cell" data-i="1" data-j="1"></div>
+                    <div class="cell" data-i="1" data-j="2"></div>
+                    <div class="cell" data-i="1" data-j="3"></div>
+                    <div class="cell" data-i="1" data-j="4"></div>
+                </div>
+                <div class="row" style="--grid-columns: 5;">
+                    <div class="cell" data-i="1" data-j="0">
+                        <div class = "item orb-green"></div>
+                    </div>
+                    <div class="cell" data-i="1" data-j="1"></div>
+                    <div class="cell" data-i="1" data-j="2"></div>
+                    <div class="cell" data-i="1" data-j="3"></div>
+                    <div class="cell" data-i="1" data-j="4"></div>
+                </div>
+                <div class="row" style="--grid-columns: 5;">
+                    <div class="cell" data-i="1" data-j="0">
+                        <div class = "item orb-green"></div>
+                    </div>
+                    <div class="cell" data-i="1" data-j="1"></div>
+                    <div class="cell" data-i="1" data-j="2"></div>
+                    <div class="cell" data-i="1" data-j="3"></div>
+                    <div class="cell" data-i="1" data-j="4"></div>
+                </div>
+                <div class="row" style="--grid-columns: 5;">
+                    <div class="cell" data-i="1" data-j="0">
+                        <div class = "item orb-green flashing"></div>
+                    </div>
+                    <div class="cell" data-i="1" data-j="1"></div>
+                    <div class="cell" data-i="1" data-j="2"></div>
+                    <div class="cell" data-i="1" data-j="3"></div>
+                    <div class="cell" data-i="1" data-j="4"></div>
+                </div>
+            </div>
+
+            <div>→</div>
+
+            <div class="board" style="--grid-rows: 5;">
+                <div class="row" style="--grid-columns: 5;">
+                    <div class="cell" data-i="1" data-j="0">
+                        <div class = "item paradox"></div>
+                    </div>
+                    <div class="cell" data-i="1" data-j="1"></div>
+                    <div class="cell" data-i="1" data-j="2"></div>
+                    <div class="cell" data-i="1" data-j="3"></div>
+                    <div class="cell" data-i="1" data-j="4"></div>
+                </div>
+                <div class="row" style="--grid-columns: 5;">
+                    <div class="cell" data-i="1" data-j="0"></div>
+                    <div class="cell" data-i="1" data-j="1"></div>
+                    <div class="cell" data-i="1" data-j="2"></div>
+                    <div class="cell" data-i="1" data-j="3"></div>
+                    <div class="cell" data-i="1" data-j="4"></div>
+                </div>
+                <div class="row" style="--grid-columns: 5;">
+                    <div class="cell" data-i="1" data-j="0"></div>
+                    <div class="cell" data-i="1" data-j="1"></div>
+                    <div class="cell" data-i="1" data-j="2"></div>
+                    <div class="cell" data-i="1" data-j="3"></div>
+                    <div class="cell" data-i="1" data-j="4"></div>
+                </div>
+                <div class="row" style="--grid-columns: 5;">
+                    <div class="cell" data-i="1" data-j="0"></div>
+                    <div class="cell" data-i="1" data-j="1"></div>
+                    <div class="cell" data-i="1" data-j="2"></div>
+                    <div class="cell" data-i="1" data-j="3"></div>
+                    <div class="cell" data-i="1" data-j="4"></div>
+                </div>
+                <div class="row" style="--grid-columns: 5;">
+                    <div class="cell" data-i="1" data-j="0"></div>
+                    <div class="cell" data-i="1" data-j="1"></div>
+                    <div class="cell" data-i="1" data-j="2"></div>
+                    <div class="cell" data-i="1" data-j="3"></div>
+                    <div class="cell" data-i="1" data-j="4"></div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
